@@ -1,1 +1,3 @@
 ngc_pt_jan.toml
+analysis/__pycache__/
+src/data/__pycache__/
