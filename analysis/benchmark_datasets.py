@@ -82,14 +82,14 @@ def benchmark_padded_dataset(
     }
 
 
-def benchmark_streaming_dataset(
+def benchmark_padding_free_dataset(
     dataset_path: str, 
     tokenizer: Any, 
     sequence_length: int, 
     batch_size: int
 ) -> Dict[str, Any]:
-    """Benchmark the streaming IterableParquetDataset implementation."""
-    print("\n=== Benchmarking IterableParquetDataset (streaming) ===")
+    """Benchmark the padding-free IterableParquetDataset implementation."""
+    print("\n=== Benchmarking IterableParquetDataset (padding-free) ===")
     
     # Measure dataset initialization time
     start_time = time.time()
@@ -129,7 +129,7 @@ def benchmark_streaming_dataset(
         break
     
     return {
-        "name": "Streaming Dataset",
+        "name": "Padding-free Dataset",
         "init_time": init_time,
         "batch_time": batch_time,
         "padding_percentage": padding_percentage,
@@ -197,8 +197,8 @@ def benchmark_datasets(
         num_samples,
     )
     
-    # Benchmark streaming dataset
-    streaming_metrics = benchmark_streaming_dataset(
+    # Benchmark padding-free dataset
+    padding_free_metrics = benchmark_padding_free_dataset(
         dataset_path, 
         tokenizer, 
         sequence_length, 
@@ -207,13 +207,13 @@ def benchmark_datasets(
     
     # Print comparative summary
     print("\n=== Benchmark Summary ===")
-    print(f"{'Metric':<25} {'Padded':<15} {'Streaming':<15}")
+    print(f"{'Metric':<25} {'Padded':<15} {'Padding-free':<15}")
     print("-" * 60)
-    print(f"{'Dataset init time (s)':<25} {padded_metrics['init_time']:<15.4f} {streaming_metrics['init_time']:<15.4f}")
-    print(f"{'Batch fetch time (s)':<25} {padded_metrics['batch_time']:<15.4f} {streaming_metrics['batch_time']:<15.4f}")
-    print(f"{'Padding percentage (%)':<25} {padded_metrics['padding_percentage']:<15.2f} {streaming_metrics['padding_percentage']:<15.2f}")
-    print(f"{'Effective tokens':<25} {padded_metrics['effective_tokens']:<15,d} {streaming_metrics['effective_tokens']:<15,d}")
-    print(f"{'Efficiency (%)':<25} {100-padded_metrics['padding_percentage']:<15.2f} {100-streaming_metrics['padding_percentage']:<15.2f}")
+    print(f"{'Dataset init time (s)':<25} {padded_metrics['init_time']:<15.4f} {padding_free_metrics['init_time']:<15.4f}")
+    print(f"{'Batch fetch time (s)':<25} {padded_metrics['batch_time']:<15.4f} {padding_free_metrics['batch_time']:<15.4f}")
+    print(f"{'Padding percentage (%)':<25} {padded_metrics['padding_percentage']:<15.2f} {padding_free_metrics['padding_percentage']:<15.2f}")
+    print(f"{'Effective tokens':<25} {padded_metrics['effective_tokens']:<15,d} {padding_free_metrics['effective_tokens']:<15,d}")
+    print(f"{'Efficiency (%)':<25} {100-padded_metrics['padding_percentage']:<15.2f} {100-padding_free_metrics['padding_percentage']:<15.2f}")
     
     print("\nRaw Tokenization Speed:")
     print(f"Tokenizer processes approximately {tokenization_metrics['tokens_per_second']:.2f} tokens/second")
@@ -222,5 +222,5 @@ def benchmark_datasets(
     return {
         "tokenization": tokenization_metrics,
         "padded": padded_metrics,
-        "streaming": streaming_metrics
+        "padding-free": padding_free_metrics
     }

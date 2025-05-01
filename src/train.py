@@ -29,8 +29,8 @@ def train(args):
                           batch_size=args.batch_size,
                           collate_fn=train_collator)
   else:
-    # Streaming IterableParquetDataset
-    logger.info("Using streaming IterableParquetDataset")
+    # Padding-free IterableParquetDataset
+    logger.info("Using padding-free IterableParquetDataset")
     train_ds = IterableParquetDataset(
         args.dataset,
         tokenizer,

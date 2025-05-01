@@ -111,9 +111,9 @@ def get_args():
     parser.add_argument(
         "--dataset-type",
         type=str,
-        choices=['padded', 'streaming'],
+        choices=['padded', 'padding-free'],
         default='padded',
-        help="Type of dataset to use: 'padded' (ParquetDataset) or 'streaming' (IterableParquetDataset)",
+        help="Type of dataset to use: 'padded' (ParquetDataset) or 'padding-free' (IterableParquetDataset)",
     )
     parser.add_argument(
         "--tokenizer-name-or-path",

@@ -1,6 +1,6 @@
 from analysis.benchmark_datasets import benchmark_datasets
 
-# Compare padding vs streaming baseline implementations
+# Compare padding vs padding-free baseline implementations
 # Run on login node for quick benchmarking
 benchmark_datasets(
     dataset_path="/capstor/store/cscs/ethz/large-sc/datasets/train_data.parquet",

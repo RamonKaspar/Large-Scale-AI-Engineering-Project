@@ -2,7 +2,7 @@
 
 #SBATCH --account=a-large-sc
 #SBATCH --time=00:14:59
-#SBATCH --job-name=lsai_baseline_streaming
+#SBATCH --job-name=lsai_baseline_padding_free
 #SBATCH --output=/iopsstor/scratch/cscs/%u/project/logs/%x-%j.out
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -21,7 +21,7 @@ ASSIGNMENT_DIR="/iopsstor/scratch/cscs/$USER/project"
 CMD_PREFIX="numactl --membind=0-3"
 
 TRAINING_CMD="python3 $ASSIGNMENT_DIR/train.py \
-    --dataset-type streaming \
+    --dataset-type padding-free \
     --sequence-length 2048 \
     --batch-size 1 \
     --learning-rate 5e-5 \
