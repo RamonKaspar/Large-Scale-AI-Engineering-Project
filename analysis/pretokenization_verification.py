@@ -1,6 +1,6 @@
 """
 Pretokenization Verification Script (run this on login node)
-This script verifies that pretokenized padded data matches on-the-fly tokenization.
+This script verifies that the two pretokenized (padded and token-list) formats match on-the-fly tokenization.
 """
 
 import random
@@ -9,8 +9,9 @@ from transformers import AutoTokenizer
 
 
 TOKENIZER_NAME = "unsloth/Mistral-Nemo-Base-2407-bnb-4bit"
-ORIGINAL_DATA_PATH = "/capstor/store/cscs/ethz/large-sc/datasets/train_data.parquet"
-PRETOKENIZED_PADDED_PATH = "/capstor/store/cscs/ethz/large-sc/datasets/train_data_tokenized_padded.parquet"
+ORIGINAL_DATA_PATH = "/capstor/scratch/cscs/kasparr/project/train_data.parquet"
+PRETOKENIZED_PADDED_PATH = "/capstor/scratch/cscs/kasparr/project/train_data_tokenized_padded_snappy.parquet"
+PRETOKENIZED_TOKEN_LIST_PATH = "/capstor/scratch/cscs/kasparr/project/train_data_tokenized_token-list_snappy.parquet"
 MODEL_SEQUENCE_LENGTH = 2048
 
 
@@ -41,14 +42,28 @@ def load_original_data(original_path: str):
         return None, 0
 
 
-def load_pretokenized_data(pretokenized_path: str):
+def load_pretokenized_data(pretokenized_path: str, expected_format: str):
     """Load pretokenized data."""
-    print(f"Loading pretokenized padded data: {pretokenized_path}")
+    print(f"Loading pretokenized {expected_format} data: {pretokenized_path}")
     try:
         pretok_table = pq.read_table(pretokenized_path)
         
-        # Check required columns
-        required_cols = ["input_ids", "attention_mask"]
+        # Check format type from metadata
+        if b'format' in pretok_table.schema.metadata:
+            format_type = pretok_table.schema.metadata[b'format'].decode()
+            if format_type != expected_format:
+                print(f"Warning: Expected format '{expected_format}', but found '{format_type}'")
+        
+        # Check required columns based on format type
+        if expected_format == "padded":
+            required_cols = ["input_ids", "attention_mask"]
+        elif expected_format == "token-list":
+            required_cols = ["tokens"]
+        elif expected_format == "packed":
+            required_cols = ["packed_chunks", "bos_positions"]
+        else:
+            required_cols = []
+            
         missing_cols = [col for col in required_cols if col not in pretok_table.column_names]
         if missing_cols:
             print(f"Error: Missing required columns: {missing_cols}")
@@ -78,7 +93,7 @@ def verify_padded_format(sample_idx: int = -1):
     if not original_table:
         return False
         
-    pretok_table = load_pretokenized_data(PRETOKENIZED_PADDED_PATH)
+    pretok_table = load_pretokenized_data(PRETOKENIZED_PADDED_PATH, "padded")
     if not pretok_table:
         return False
     
@@ -124,35 +139,81 @@ def verify_padded_format(sample_idx: int = -1):
     mask_match = (on_the_fly_mask == pretok_mask)
     
     if ids_match and mask_match:
-        print("✓ MATCH: Input IDs and attention masks are identical")
         return True
     else:
-        print("✗ MISMATCH:")
-        if not ids_match:
-            print("  - Input IDs differ")
-            if len(on_the_fly_ids) != len(pretok_ids):
-                print(f"  - Length mismatch: on-the-fly={len(on_the_fly_ids)}, pretokenized={len(pretok_ids)}")
-            else:
-                # Find first difference
-                for i, (a, b) in enumerate(zip(on_the_fly_ids, pretok_ids)):
-                    if a != b:
-                        print(f"  - First difference at position {i}: {a} vs {b}")
-                        break
-                        
-        if not mask_match:
-            print("  - Attention masks differ")
+        return False
+
+
+def verify_token_list_format(sample_idx: int = -1):
+    """Verify the token-list format."""
+    print("\n" + "="*80)
+    print("VERIFYING TOKEN-LIST FORMAT")
+    print("="*80 + "\n")
+    
+    # 1. Load resources
+    tokenizer = load_tokenizer(TOKENIZER_NAME)
+    if not tokenizer:
+        return False
+        
+    original_table, num_samples = load_original_data(ORIGINAL_DATA_PATH)
+    if not original_table:
+        return False
+        
+    pretok_table = load_pretokenized_data(PRETOKENIZED_TOKEN_LIST_PATH, "token-list")
+    if not pretok_table:
+        return False
+    
+    # 2. Select sample index
+    if sample_idx == -1:
+        sample_idx = random.randint(0, min(len(original_table), len(pretok_table)) - 1)
+        print(f"Selected random sample index: {sample_idx}")
+    else:
+        print(f"Using specified sample index: {sample_idx}")
+
+    # 3. Get original text
+    original_text = original_table["text"][sample_idx].as_py()
+    print("\n--- Original Text Sample ---")
+    print(original_text[:200] + "..." if len(original_text) > 200 else original_text)
+
+    # 4. Perform on-the-fly tokenization without padding
+    print(f"\n--- On-the-Fly Tokenization (no padding) ---")
+    on_the_fly_tokens = tokenizer.encode(
+        original_text,
+        max_length=MODEL_SEQUENCE_LENGTH,
+        truncation=True
+    )
+    
+    print(f"Token IDs (first 10): {on_the_fly_tokens[:10]}")
+    print(f"Token IDs (last 10): {on_the_fly_tokens[-10:]}")
+    print(f"Total tokens: {len(on_the_fly_tokens)}")
+    
+    # 5. Get pretokenized data
+    print("\n--- Pretokenized Data ---")
+    pretok_tokens = pretok_table["tokens"][sample_idx].as_py()
+    
+    print(f"Token IDs (first 10): {pretok_tokens[:10]}")
+    print(f"Token IDs (last 10): {pretok_tokens[-10:]}")
+    print(f"Total tokens: {len(pretok_tokens)}")
+    
+    # 6. Compare
+    print("\n--- Comparison ---")
+    tokens_match = (on_the_fly_tokens == pretok_tokens)
+    
+    if tokens_match:
+        return True
+    else:
         return False
 
 
 def main():
-    success = verify_padded_format()
+    padded_success = False
+    token_list_success = False
     
-    print("\n" + "="*80)
-    print("VERIFICATION SUMMARY")
-    print("="*80)
+    padded_success = verify_padded_format()
+    if padded_success: print("Padded format verification passed.")
     
-    status = "PASSED" if success else "FAILED"
-    print(f"Padded format verification: {status}")
+    token_list_success = verify_token_list_format()
+    if token_list_success: print("Token-list format verification passed.")
 
 if __name__ == "__main__":
     main()
