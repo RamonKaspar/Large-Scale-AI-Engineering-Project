@@ -23,6 +23,7 @@ from analysis.plotting import plot_results
 log_files = {
     'Baseline padded': 'logs/lsai_baseline_padded-396307.out',
     'Baseline padding-free': 'logs/lsai_baseline_padding_free-396382.out',
+    'Pretokenized padded': 'logs/lsai_pretokenized_padded-397348.out',
 }
 output_dir = "plots"
 os.makedirs(output_dir, exist_ok=True)

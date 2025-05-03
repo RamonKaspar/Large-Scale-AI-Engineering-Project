@@ -281,3 +281,13 @@ def plot_results(log_files, output_dir="plots"):
     
     # 6. Special comparison chart
     plot_efficiency_comparison(results, output_dir)
+    
+    # 6. Line chart of loss over time
+    plot_time_series(
+        results,
+        'loss',
+        'Validation Loss During Training',
+        'Loss',
+        'loss_over_time.png',
+        output_dir
+    )
