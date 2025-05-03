@@ -111,9 +111,9 @@ def get_args():
     parser.add_argument(
         "--dataset-type",
         type=str,
-        choices=['padded', 'padding-free', 'token-list', 'packed'],
+        choices=['padded', 'padding-free', 'token-list'],
         default='padded',
-        help="Type of dataset to use: 'padded' (ParquetDataset), 'padding-free' (IterableParquetDataset), 'token-list' or 'packed'",
+        help="Type of dataset to use: 'padded' (ParquetDataset), 'padding-free' (IterableParquetDataset), 'token-list'",
     )
     parser.add_argument(
         "--pretokenized",

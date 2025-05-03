@@ -7,7 +7,7 @@ from transformers import AutoTokenizer
 
 from data.dataset import CollatorForCLM, ParquetDataset
 from data.iterable_dataset import IterableParquetDataset
-from data.pretokenized_dataset import PreTokenizedDataset, PreTokenizedTokenListDataset, TokenListCollator, PreTokenizedPackedDataset
+from data.pretokenized_dataset import PreTokenizedDataset, IterablePreTokenizedDataset
 from model.model import Transformer, TransformerModelArgs
 from utils import build_lr_scheduler, clip_grad_norm_, get_args, get_num_params, get_num_flop_per_token, init_logger, logger, PRECISION_STR_TO_DTYPE, set_default_dtype
 
@@ -26,43 +26,22 @@ def train(args):
     if args.dataset_type == 'padded':
       # Use pretokenized padded dataset
       train_ds = PreTokenizedDataset(
-          args.dataset,
-          args.sequence_length,
-          args.batch_size*args.training_steps
+        args.dataset,
+        args.sequence_length,
+        args.batch_size*args.training_steps
       )
       train_collator = CollatorForCLM(args.sequence_length, tokenizer.pad_token_id)
       train_dl = DataLoader(train_ds,
-                            batch_size=args.batch_size,
-                            collate_fn=train_collator)
+                          batch_size=args.batch_size,
+                          collate_fn=train_collator)
     elif args.dataset_type == 'token-list':
-      # Use pretokenized token-list dataset
-      train_ds = PreTokenizedTokenListDataset(
-          args.dataset,
-          args.sequence_length,
-          args.batch_size*args.training_steps
+      # Use pretokenized token-list with iterable dataset
+      train_ds = IterablePreTokenizedDataset(
+        args.dataset,
+        args.sequence_length,
+        bos_token_id=tokenizer.bos_token_id if tokenizer.bos_token_id is not None else 1
       )
-      train_collator = TokenListCollator(
-          args.sequence_length, 
-          tokenizer.bos_token_id if tokenizer.bos_token_id is not None else 1
-      )
-      train_dl = DataLoader(train_ds,
-                            batch_size=args.batch_size,
-                            collate_fn=train_collator,
-                            num_workers=4,
-                            pin_memory=True)
-    elif args.dataset_type == 'packed':
-      # Use pretokenized packed dataset - no collator needed as the dataset does the work
-      bos_token_id = tokenizer.bos_token_id if tokenizer.bos_token_id is not None else 1
-      train_ds = PreTokenizedPackedDataset(
-          args.dataset,
-          args.sequence_length,
-          args.batch_size*args.training_steps,
-          bos_token_id=bos_token_id
-      )
-      train_dl = DataLoader(train_ds,
-                            batch_size=args.batch_size,
-                            num_workers=4,
-                            pin_memory=True)
+      train_dl = DataLoader(train_ds, batch_size=args.batch_size)
     else:
       raise NotImplementedError(f"Pretokenized dataset type '{args.dataset_type}' not implemented")
   else:
