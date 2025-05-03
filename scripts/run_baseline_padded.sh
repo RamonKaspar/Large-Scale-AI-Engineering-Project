@@ -20,7 +20,8 @@ ASSIGNMENT_DIR="/iopsstor/scratch/cscs/$USER/project"
 
 CMD_PREFIX="numactl --membind=0-3"
 
-TRAINING_CMD="python3 $ASSIGNMENT_DIR/train.py \
+TRAINING_CMD="python3 $ASSIGNMENT_DIR/src/train.py \
+    --dataset /capstor/scratch/cscs/kasparr/project/train_data.parquet \
     --dataset-type padded \
     --sequence-length 2048 \
     --batch-size 1 \
