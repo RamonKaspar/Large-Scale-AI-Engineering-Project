@@ -23,7 +23,7 @@ CMD="python3 $ASSIGNMENT_DIR/src/preprocessing/pretokenize.py \
     --output-dir /capstor/store/cscs/ethz/large-sc/datasets \
     --tokenizer-name unsloth/Mistral-Nemo-Base-2407-bnb-4bit \
     --max-length 2048 \
-    --formats padded"
+    --format padded"
 
 srun --cpus-per-task $SLURM_CPUS_PER_TASK bash -c "$CMD"
 
