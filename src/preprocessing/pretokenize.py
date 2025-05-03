@@ -1,8 +1,7 @@
 """
 This module provides functionality to convert text data into tokenized formats:
 1. Pretokenized Padded: Offline tokenization with padding (for ParquetDataset)
-2. Pretokenized Token-List: Just token IDs without packing or padding (for on-the-fly packing)
-3. Pretokenized Packed: Tokens pre-packed into continuous streams (for maximum efficiency)
+2. Pretokenized Token-List: Just token IDs without padding
 """
 
 import os
@@ -52,15 +51,9 @@ def parse_args():
         "--format",
         type=str,
         nargs="+",
-        choices=["padded", "token-list", "packed"],
-        default=["padded", "token-list", "packed"],
+        choices=["padded", "token-list"],
+        default=["padded", "token-list"],
         help="Which tokenization formats to generate",
-    )
-    parser.add_argument(
-        "--stream-chunk-size",
-        type=int,
-        default=20480,
-        help="Size of token chunks for the packed format (default: 20480, 10x sequence length)",
     )
     return parser.parse_args()
 
@@ -150,81 +143,13 @@ def tokenize_text_token_list(texts: List[str], tokenizer: PreTrainedTokenizer, m
     return tokenized_data
 
 
-def tokenize_text_packed(texts: List[str], tokenizer: PreTrainedTokenizer, max_length: int = 2048, chunk_size: int = 20480, batch_size: int = 100) -> Dict[str, List[Any]]:
-    """
-    Tokenize and pack texts into continuous token streams with optimized performance.
-    """
-    total = len(texts)
-    bos_token_id = tokenizer.bos_token_id if tokenizer.bos_token_id is not None else 1
-    pad_token_id = tokenizer.pad_token_id
-    
-    # Single continuous stream of tokens with BOS markers
-    all_tokens = []
-    
-    start_time = time.time()
-    
-    # First pass: Tokenize everything into one continuous stream
-    for i in tqdm(range(0, total, batch_size), desc="Tokenizing texts (packed format)"):
-        batch_texts = texts[i:min(i+batch_size, total)]
-        
-        # Batch tokenize entire batch
-        encoded = tokenizer.batch_encode_plus(
-            batch_texts,
-            max_length=max_length,
-            padding=False,
-            truncation=True,
-            return_tensors=None
-        )
-        
-        # Process each document
-        for doc_tokens in encoded["input_ids"]:
-            # Add BOS token before each document
-            all_tokens.append(bos_token_id)
-            all_tokens.extend(doc_tokens)
-        
-        # Progress reporting
-        if (i // batch_size) % 10 == 0 and i > 0:
-            elapsed = time.time() - start_time
-            docs_per_sec = i / elapsed
-            print(f"Processed {i}/{total} documents ({docs_per_sec:.2f} docs/sec)")
-    
-    # Second pass: Divide the continuous stream into fixed-size chunks
-    packed_chunks = []
-    bos_positions_list = []
-    
-    # Process in chunk_size increments
-    for chunk_start in range(0, len(all_tokens), chunk_size):
-        chunk_end = min(chunk_start + chunk_size, len(all_tokens))
-        chunk = all_tokens[chunk_start:chunk_end]
-        
-        # Find BOS positions in this chunk
-        bos_positions = [i for i, token_id in enumerate(chunk) if token_id == bos_token_id]
-        
-        # Pad if needed
-        if len(chunk) < chunk_size:
-            chunk.extend([pad_token_id] * (chunk_size - len(chunk)))
-        
-        packed_chunks.append(chunk)
-        bos_positions_list.append(bos_positions)
-    
-    elapsed = time.time() - start_time
-    print(f"Packing completed in {elapsed:.2f} seconds")
-    print(f"Created {len(packed_chunks)} chunks of {chunk_size} tokens each")
-    
-    return {
-        "packed_chunks": packed_chunks,
-        "bos_positions": bos_positions_list,
-        "chunk_size": chunk_size
-    }
-
-
 def save_tokenized_data(data: Dict[str, Any], format_type: str, output_path: str, tokenizer_name: str):
     """
     Save tokenized data to a parquet file with appropriate metadata.
     
     Args:
         data: The tokenized data
-        format_type: The format type (padded, token-list, or packed)
+        format_type: The format type (padded or token-list)
         output_path: Path to save the output
         tokenizer_name: Name of the tokenizer used
     """
@@ -241,12 +166,6 @@ def save_tokenized_data(data: Dict[str, Any], format_type: str, output_path: str
         table = pa.Table.from_pydict({
             "tokens": data["tokens"]
         })
-    elif format_type == "packed":
-        # For packed format
-        table = pa.Table.from_pydict({
-            "packed_chunks": data["packed_chunks"],
-            "bos_positions": data["bos_positions"]
-        })
     
     # Add metadata
     metadata = {
@@ -254,10 +173,6 @@ def save_tokenized_data(data: Dict[str, Any], format_type: str, output_path: str
         "format": format_type,
         "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
     }
-    
-    # Add format-specific metadata
-    if format_type == "packed":
-        metadata["chunk_size"] = str(data["chunk_size"])
     
     # Encode metadata for PyArrow
     metadata_encoded = {k: v.encode() for k, v in metadata.items()}
@@ -314,10 +229,6 @@ def main():
         elif format_type == "token-list":
             data = tokenize_text_token_list(
                 texts, tokenizer, args.max_length, args.batch_size
-            )
-        elif format_type == "packed":
-            data = tokenize_text_packed(
-                texts, tokenizer, args.max_length, args.stream_chunk_size, args.batch_size
             )
         
         save_tokenized_data(data, format_type, output_path, args.tokenizer_name)
