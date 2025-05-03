@@ -21,7 +21,7 @@ ASSIGNMENT_DIR="/iopsstor/scratch/cscs/$USER/project"
 CMD_PREFIX="numactl --membind=0-3"
 
 TRAINING_CMD="python3 $ASSIGNMENT_DIR/src/train.py \
-    --dataset /capstor/scratch/cscs/kasparr/project/train_data_tokenized_token-list.parquet \
+    --dataset /capstor/scratch/cscs/kasparr/project/train_data_tokenized_token-list_snappy.parquet \
     --dataset-type token-list \
     --pretokenized \
     --sequence-length 2048 \
