@@ -8,7 +8,7 @@ import seaborn as sns
 
 sns.set_theme(style="darkgrid")
 sns.set_context("paper", font_scale=1.5, rc={"lines.linewidth": 2.5})
-PALETTE = sns.color_palette("viridis")
+PALETTE = sns.color_palette()
 
 
 def extract_metrics(log_file):
@@ -106,7 +106,8 @@ def plot_bar_comparison(results, metric_name, title, ylabel, filename, output_di
     ax = sns.barplot(x='Configuration', y=metric_name, hue='Configuration', data=df, palette=PALETTE[:len(configs)], legend=False)
     plt.title(title, fontsize=18, pad=20)
     plt.ylabel(ylabel, fontsize=14)
-    plt.xticks(fontsize=12)
+    plt.xticks(fontsize=8)
+    ax.set_xticklabels([config.replace(' ', '\n').replace('_', ' ') for config in configs])
     plt.yticks(fontsize=12)
     plt.xlabel(None)  # Remove x-label
     
@@ -159,7 +160,7 @@ def plot_time_series(results, metric_name, title, ylabel, filename, output_dir="
 
 def plot_efficiency_comparison(results, output_dir="plots"):
     """Create an improved comparison chart for efficiency metrics with consistent coloring."""
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 8))
     
     configs = list(results.keys())
     tokens_per_second = [results[c]['tokens_per_second'] for c in configs]
@@ -180,6 +181,7 @@ def plot_efficiency_comparison(results, output_dir="plots"):
     ax1.set_title('Throughput (Tokens/second)', fontsize=16)
     ax1.set_ylabel('Tokens per Second', fontsize=14)
     ax1.set_xlabel(None)  # Remove x-label from first subplot
+    ax1.set_xticklabels([config.replace(' ', '\n').replace('_', ' ') for config in configs])
     # Add value labels
     for i, v in enumerate(tokens_per_second):
         ax1.text(i, v * 1.01, f'{v:.1f}', ha='center', fontsize=13, fontweight='bold')
@@ -190,6 +192,7 @@ def plot_efficiency_comparison(results, output_dir="plots"):
     ax2.set_title('GPU Utilization (MFU %)', fontsize=16)
     ax2.set_ylabel('Model FLOPS Utilization (%)', fontsize=14)
     ax2.set_xlabel(None)  # Remove x-label from second subplot
+    ax2.set_xticklabels([config.replace(' ', '\n').replace('_', ' ') for config in configs])
     # Add value labels
     for i, v in enumerate(mfu_percent):
         ax2.text(i, v * 1.01, f'{v:.1f}%', ha='center', fontsize=13, fontweight='bold')
@@ -222,11 +225,11 @@ def plot_results(log_files, output_dir="plots"):
     
     print(f"\nSummary of Results (averaged over all steps except first 5):")
     print("-" * 80)
-    print(f"{'Configuration':<25} {'Tokens/sec':<15} {'MFU %':<15} {'TFLOPs':<15}")
+    print(f"{'Configuration':<35} {'Tokens/sec':<15} {'MFU %':<15} {'TFLOPs':<15}")
     print("-" * 80)
     
     for config, metrics in results.items():
-        print(f"{config:<25} {metrics['tokens_per_second']:<15.2f} {metrics['mfu_percent']:<15.2f} {metrics['tflops']:<15.2f}")
+        print(f"{config:<35} {metrics['tokens_per_second']:<15.2f} {metrics['mfu_percent']:<15.2f} {metrics['tflops']:<15.2f}")
     
     # === Create plots ===
     # 1. Bar chart of tokens per second
