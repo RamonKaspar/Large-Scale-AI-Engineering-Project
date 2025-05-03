@@ -137,7 +137,7 @@ def plot_time_series(results, metric_name, title, ylabel, filename, output_dir="
         filename (str): Output filename.
         output_dir (str): Directory to save the plot.
     """
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(16, 6))
     
     # Create the line plot
     for i, (config, metrics) in enumerate(results.items()):
@@ -205,7 +205,90 @@ def plot_efficiency_comparison(results, output_dir="plots"):
     
     fig.suptitle('Performance Comparison: Throughput and Efficiency', fontsize=18, y=1.05)
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, 'efficiency_comparison.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, 'efficiency_comparison.png'), dpi=600, bbox_inches='tight')
+    plt.close()
+    
+    
+def plot_batch_comparison(results, output_dir="plots"):
+    """Create grouped bar charts comparing batch sizes within each approach."""
+    
+    # Define the approaches and their configurations
+    approaches = {
+        "Baseline Padded": ["Baseline padded (batch_size=1)", "Baseline padded (batch_size=2)"],
+        "Baseline Padding-Free": ["Baseline padding-free (batch_size=1)", "Baseline padding-free (batch_size=2)"],
+        "Pretokenized Padded": ["Pretokenized padded (batch_size=1)", "Pretokenized padded (batch_size=2)"],
+        "Pretokenized Token-List": ["Pretokenized token-list (batch_size=1)", "Pretokenized token-list (batch_size=2)"]
+    }
+    
+    # Create figure with subplots for tokens/sec and MFU
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 12))
+    
+    # Define x positions for the groups
+    x = np.arange(len(approaches))
+    width = 0.35  # Width of the bars
+    
+    # Extract data
+    batch1_tokens = []
+    batch2_tokens = []
+    batch1_mfu = []
+    batch2_mfu = []
+    
+    for approach, configs in approaches.items():
+        if configs[0] in results:
+            batch1_tokens.append(results[configs[0]]['tokens_per_second'])
+            batch1_mfu.append(results[configs[0]]['mfu_percent'])
+        else:
+            batch1_tokens.append(0)
+            batch1_mfu.append(0)
+            
+        if configs[1] in results:
+            batch2_tokens.append(results[configs[1]]['tokens_per_second'])
+            batch2_mfu.append(results[configs[1]]['mfu_percent'])
+        else:
+            batch2_tokens.append(0)
+            batch2_mfu.append(0)
+    
+    # Plot tokens per second
+    ax1.bar(x - width/2, batch1_tokens, width, label='Batch Size = 1', color=PALETTE[-1])
+    ax1.bar(x + width/2, batch2_tokens, width, label='Batch Size = 2', color=PALETTE[-2])
+    
+    # Plot MFU
+    ax2.bar(x - width/2, batch1_mfu, width, label='Batch Size = 1', color=PALETTE[-1])
+    ax2.bar(x + width/2, batch2_mfu, width, label='Batch Size = 2', color=PALETTE[-2])
+    
+    # Add value labels
+    for i, v in enumerate(batch1_tokens):
+        ax1.text(i - width/2, v * 1.01, f'{v:.1f}', ha='center', fontsize=12)
+    for i, v in enumerate(batch2_tokens):
+        ax1.text(i + width/2, v * 1.01, f'{v:.1f}', ha='center', fontsize=12)
+        
+    for i, v in enumerate(batch1_mfu):
+        ax2.text(i - width/2, v * 1.01, f'{v:.1f}%', ha='center', fontsize=12)
+    for i, v in enumerate(batch2_mfu):
+        ax2.text(i + width/2, v * 1.01, f'{v:.1f}%', ha='center', fontsize=12)
+    
+    # Configure plot 1 (tokens per second)
+    ax1.set_ylabel('Tokens per Second', fontsize=14)
+    ax1.set_title('Throughput Comparison: Batch Size 1 vs. Batch Size 2', fontsize=16)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([])  # Hide x-labels for top plot
+    ax1.legend(fontsize=12)
+    
+    # Configure plot 2 (MFU)
+    ax2.set_ylabel('Model FLOPS Utilization (%)', fontsize=14)
+    ax2.set_title('Efficiency Comparison: Batch Size 1 vs. Batch Size 2', fontsize=16)
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(approaches.keys(), fontsize=12)
+    ax2.legend(fontsize=12)
+    
+    # Extend the upper limit to make room for labels
+    for ax in [ax1, ax2]:
+        y_min, y_max = ax.get_ylim()
+        ax.set_ylim(y_min, y_max * 1.1)
+    
+    fig.suptitle('Performance Impact of Batch Size by Implementation Approach', fontsize=18)
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, 'batch_size_comparison.png'), dpi=600, bbox_inches='tight')
     plt.close()
 
 
@@ -294,3 +377,6 @@ def plot_results(log_files, output_dir="plots"):
         'loss_over_time.png',
         output_dir
     )
+    
+    # 7. Batch size comparison
+    plot_batch_comparison(results, output_dir)
