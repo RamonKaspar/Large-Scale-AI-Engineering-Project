@@ -272,8 +272,8 @@ def save_tokenized_data(data: Dict[str, Any], format_type: str, output_path: str
     
     # Save the tokenized data
     print(f"Saving {format_type} format to: {output_path}")
-    # NOTE: High compression level to not exceed disk quoata limitations
-    pq.write_table(table, output_path, compression="zstd", compression_level=22)
+    # NOTE: We use group size 1000 (as in original train_data.parquet)
+    pq.write_table(table, output_path, compression="snappy", row_group_size=1000, use_dictionary=False, write_statistics=True)
     
     # Report output size
     output_size_mb = os.path.getsize(output_path) / (1024 * 1024)
@@ -303,7 +303,7 @@ def main():
     
     # Process each requested format
     for format_type in args.format:
-        output_file = f"train_data_tokenized_{format_type}.parquet"
+        output_file = f"train_data_tokenized_{format_type}_snappy.parquet"
         output_path = os.path.join(args.output_dir, output_file)
         
         if format_type == "padded":
