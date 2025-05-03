@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="/capstor/store/cscs/ethz/large-sc/datasets",
+        default="/capstor/scratch/cscs/kasparr/project",
         help="Directory to save the pretokenized output files",
     )
     parser.add_argument(
@@ -171,17 +171,17 @@ def main():
     estimated_full_input_size_gb = input_size_mb * len(texts) / 1000
     print(f"Estimated input text size: {estimated_full_input_size_gb:.2f} GB")
     
-    # Process padded format only
-    output_file = "train_data_tokenized_padded.parquet"
-    output_path = os.path.join(args.output_dir, output_file)
-    
-    # Add +1 to max_length for collator compatibility (as in verification script)
-    padded_length_for_tokenizer = args.max_length + 1
-    data = tokenize_text_padded(
-        texts, tokenizer, padded_length_for_tokenizer, args.batch_size
-    )
-    
-    save_tokenized_data(data, output_path, args.tokenizer_name)
+    # Process each format type
+    for format_type in args.format:
+        if format_type == "padded":
+            output_file = "train_data_tokenized_padded.parquet"
+            output_path = os.path.join(args.output_dir, output_file)
+            # Add +1 to max_length for collator compatibility
+            padded_length_for_tokenizer = args.max_length + 1
+            data = tokenize_text_padded(
+                texts, tokenizer, padded_length_for_tokenizer, args.batch_size
+            )
+            save_tokenized_data(data, output_path, args.tokenizer_name)
     
     print(f"Pretokenization completed successfully!")
 

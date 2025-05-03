@@ -20,7 +20,7 @@ ASSIGNMENT_DIR="/iopsstor/scratch/cscs/$USER/project"
 
 CMD="python3 $ASSIGNMENT_DIR/src/preprocessing/pretokenize.py \
     --input-path /capstor/store/cscs/ethz/large-sc/datasets/train_data.parquet \
-    --output-dir /capstor/store/cscs/ethz/large-sc/datasets \
+    --output-dir /capstor/scratch/cscs/kasparr/project \
     --tokenizer-name unsloth/Mistral-Nemo-Base-2407-bnb-4bit \
     --max-length 2048 \
     --format padded"
