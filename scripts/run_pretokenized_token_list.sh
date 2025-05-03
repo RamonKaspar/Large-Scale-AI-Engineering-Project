@@ -25,7 +25,7 @@ TRAINING_CMD="python3 $ASSIGNMENT_DIR/src/train.py \
     --dataset-type token-list \
     --pretokenized \
     --sequence-length 2048 \
-    --batch-size 1 \
+    --batch-size 2 \
     --learning-rate 5e-5 \
     --lr-warmup-steps 100 \
     --training-steps 1000 \
