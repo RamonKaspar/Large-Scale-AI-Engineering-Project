@@ -116,6 +116,11 @@ def get_args():
         help="Type of dataset to use: 'padded' (ParquetDataset) or 'padding-free' (IterableParquetDataset)",
     )
     parser.add_argument(
+        "--pretokenized",
+        action='store_true',
+        help="Use pretokenized data instead of on-the-fly tokenization"
+    )
+    parser.add_argument(
         "--tokenizer-name-or-path",
         type=str,
         default="unsloth/Mistral-Nemo-Base-2407-bnb-4bit",

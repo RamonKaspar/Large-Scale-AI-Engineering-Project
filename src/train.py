@@ -7,6 +7,7 @@ from transformers import AutoTokenizer
 
 from data.dataset import CollatorForCLM, ParquetDataset
 from data.iterable_dataset import IterableParquetDataset
+from data.pretokenized_dataset import PreTokenizedDataset
 from model.model import Transformer, TransformerModelArgs
 from utils import build_lr_scheduler, clip_grad_norm_, get_args, get_num_params, get_num_flop_per_token, init_logger, logger, PRECISION_STR_TO_DTYPE, set_default_dtype
 
@@ -20,25 +21,42 @@ def train(args):
   logger.info("Setting up DataLoaders...")
   tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name_or_path)
   
-  if args.dataset_type == 'padded':
-    # Original padded dataset with collator
-    logger.info("Using padded ParquetDataset")
-    train_ds = ParquetDataset(args.dataset, tokenizer, args.sequence_length, args.batch_size*args.training_steps)
-    train_collator = CollatorForCLM(args.sequence_length, tokenizer.pad_token_id)
-    train_dl = DataLoader(train_ds,
-                          batch_size=args.batch_size,
-                          collate_fn=train_collator)
+  if args.pretokenized:
+    logger.info(f"Using pretokenized data: {args.dataset}")
+    if args.dataset_type == 'padded':
+      # Use pretokenized padded dataset
+      train_ds = PreTokenizedDataset(
+          args.dataset,
+          args.sequence_length,
+          args.batch_size*args.training_steps
+      )
+      train_collator = CollatorForCLM(args.sequence_length, tokenizer.pad_token_id)
+      train_dl = DataLoader(train_ds,
+                            batch_size=args.batch_size,
+                            collate_fn=train_collator)
+    else:
+      # TODO: Maybe we'll implement this later for non-padded formats
+      raise NotImplementedError("Pretokenized padding-free datasets not yet implemented")
   else:
-    # Padding-free IterableParquetDataset
-    logger.info("Using padding-free IterableParquetDataset")
-    train_ds = IterableParquetDataset(
-        args.dataset,
-        tokenizer,
-        args.sequence_length,
-        bos_token_id=tokenizer.bos_token_id if tokenizer.bos_token_id is not None else 1
-    )
-    # No collator needed for the IterableParquetDataset
-    train_dl = DataLoader(train_ds, batch_size=args.batch_size)
+    # Original on-the-fly tokenization code
+    if args.dataset_type == 'padded':
+      # Original padded dataset with collator
+      logger.info("Using padded ParquetDataset with on-the-fly tokenization")
+      train_ds = ParquetDataset(args.dataset, tokenizer, args.sequence_length, args.batch_size*args.training_steps)
+      train_collator = CollatorForCLM(args.sequence_length, tokenizer.pad_token_id)
+      train_dl = DataLoader(train_ds,
+                            batch_size=args.batch_size,
+                            collate_fn=train_collator)
+    else:
+      # Padding-free IterableParquetDataset
+      logger.info("Using padding-free IterableParquetDataset with on-the-fly tokenization")
+      train_ds = IterableParquetDataset(
+          args.dataset,
+          tokenizer,
+          args.sequence_length,
+          bos_token_id=tokenizer.bos_token_id if tokenizer.bos_token_id is not None else 1
+      )
+      train_dl = DataLoader(train_ds, batch_size=args.batch_size)
   
   train_dl_iterator = iter(train_dl)
 
