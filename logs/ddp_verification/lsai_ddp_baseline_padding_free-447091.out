@@ -1,0 +1,127 @@
+[sbatch-master] running on nid006558
+[sbatch-master] SLURM_NODELIST: nid006558
+[sbatch-master] SLURM_NNODES: 1
+[sbatch-master] SLURM_NODEID: 0
+[Master] Master node: nid006558
+[Master] World size: 1
+slurmstepd: error: couldn't chdir to `/workspace': No such file or directory: going to /tmp instead
+slurmstepd: error: couldn't chdir to `/workspace': No such file or directory: going to /tmp instead
+[srun] rank=0 host=nid006558 noderank=0 localrank=0
+2025-05-18 16:26:34,097 - root - INFO - [Distributed Init] Rank 0 initialized on node 0 on GPU 0.
+[rank0]:[W518 16:26:34.630746960 ProcessGroupNCCL.cpp:4454] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+2025-05-18 16:26:35,885 - root - INFO - [Rank 0] All ranks ready!
+2025-05-18 16:26:35,885 - root - INFO - Distributed training enabled: 1 processes
+2025-05-18 16:26:35,885 - root - INFO - Master process: 0 on cuda:0
+2025-05-18 16:26:35,885 - root - INFO - Experiment args: Namespace(dataset='/capstor/scratch/cscs/kasparr/project/train_data.parquet', dataset_type='padding-free', pretokenized=False, tokenizer_name_or_path='unsloth/Mistral-Nemo-Base-2407-bnb-4bit', sequence_length=2048, batch_size=1, fused_optimizer=False, learning_rate=5e-05, lr_warmup_steps=100, training_steps=1000, logging_frequency=10, profile=False, profile_step_start=10, profile_step_end=10, grad_max_norm=1, model_dtype='bf16', compile=False, distributed=True, backend='nccl', find_unused_parameters=False)
+2025-05-18 16:26:35,885 - root - INFO - Setting up Tokenizer...
+2025-05-18 16:26:36,425 - root - INFO - Setting up DataLoaders...
+2025-05-18 16:26:36,425 - root - INFO - Using padding-free IterableParquetDataset with on-the-fly tokenization
+2025-05-18 16:26:37,912 - root - INFO - Setting up Model...
+2025-05-18 16:27:13,450 - root - INFO - Model wrapped with DistributedDataParallel
+2025-05-18 16:27:13,451 - root - INFO - Global batch size: 1 (local: 1 × 1 processes)
+2025-05-18 16:27:13,452 - root - INFO - Starting training!
+/iopsstor/scratch/cscs/kasparr/project/src/train.py:232: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  num_items_tensor = torch.tensor(num_items_in_batch, device=device)
+2025-05-18 16:27:14,524 - root - INFO - Step: 1 | Loss: 11.92 | Tokens per second: 1911.92 | Training tokens per second (%): 99.51 | MFU (%): 9.96 | TFLOPs: 98.54 | Global batch size: 1 | Global tokens/sec: 1911.92
+2025-05-18 16:27:17,643 - root - INFO - Step: 10 | Loss: 11.84 | Tokens per second: 5910.09 | Training tokens per second (%): 99.86 | MFU (%): 30.80 | TFLOPs: 304.61 | Global batch size: 1 | Global tokens/sec: 5910.09
+2025-05-18 16:27:21,111 - root - INFO - Step: 20 | Loss: 11.34 | Tokens per second: 5905.86 | Training tokens per second (%): 99.71 | MFU (%): 30.78 | TFLOPs: 304.40 | Global batch size: 1 | Global tokens/sec: 5905.86
+2025-05-18 16:27:24,584 - root - INFO - Step: 30 | Loss: 10.34 | Tokens per second: 5897.48 | Training tokens per second (%): 99.79 | MFU (%): 30.73 | TFLOPs: 303.96 | Global batch size: 1 | Global tokens/sec: 5897.48
+2025-05-18 16:27:28,046 - root - INFO - Step: 40 | Loss: 9.05 | Tokens per second: 5916.58 | Training tokens per second (%): 99.83 | MFU (%): 30.83 | TFLOPs: 304.95 | Global batch size: 1 | Global tokens/sec: 5916.58
+2025-05-18 16:27:31,527 - root - INFO - Step: 50 | Loss: 8.75 | Tokens per second: 5884.76 | Training tokens per second (%): 99.92 | MFU (%): 30.67 | TFLOPs: 303.31 | Global batch size: 1 | Global tokens/sec: 5884.76
+2025-05-18 16:27:35,008 - root - INFO - Step: 60 | Loss: 8.70 | Tokens per second: 5883.79 | Training tokens per second (%): 99.96 | MFU (%): 30.66 | TFLOPs: 303.26 | Global batch size: 1 | Global tokens/sec: 5883.79
+2025-05-18 16:27:38,495 - root - INFO - Step: 70 | Loss: 9.02 | Tokens per second: 5874.09 | Training tokens per second (%): 99.91 | MFU (%): 30.61 | TFLOPs: 302.76 | Global batch size: 1 | Global tokens/sec: 5874.09
+2025-05-18 16:27:41,974 - root - INFO - Step: 80 | Loss: 7.88 | Tokens per second: 5887.89 | Training tokens per second (%): 99.81 | MFU (%): 30.68 | TFLOPs: 303.47 | Global batch size: 1 | Global tokens/sec: 5887.89
+2025-05-18 16:27:45,451 - root - INFO - Step: 90 | Loss: 7.75 | Tokens per second: 5890.15 | Training tokens per second (%): 99.76 | MFU (%): 30.70 | TFLOPs: 303.59 | Global batch size: 1 | Global tokens/sec: 5890.15
+2025-05-18 16:27:48,929 - root - INFO - Step: 100 | Loss: 6.97 | Tokens per second: 5889.57 | Training tokens per second (%): 99.89 | MFU (%): 30.69 | TFLOPs: 303.56 | Global batch size: 1 | Global tokens/sec: 5889.57
+2025-05-18 16:27:52,413 - root - INFO - Step: 110 | Loss: 7.25 | Tokens per second: 5878.99 | Training tokens per second (%): 99.79 | MFU (%): 30.64 | TFLOPs: 303.01 | Global batch size: 1 | Global tokens/sec: 5878.99
+2025-05-18 16:27:55,897 - root - INFO - Step: 120 | Loss: 6.00 | Tokens per second: 5879.92 | Training tokens per second (%): 99.91 | MFU (%): 30.64 | TFLOPs: 303.06 | Global batch size: 1 | Global tokens/sec: 5879.92
+2025-05-18 16:27:59,377 - root - INFO - Step: 130 | Loss: 7.92 | Tokens per second: 5885.72 | Training tokens per second (%): 99.72 | MFU (%): 30.67 | TFLOPs: 303.36 | Global batch size: 1 | Global tokens/sec: 5885.72
+2025-05-18 16:28:02,863 - root - INFO - Step: 140 | Loss: 7.49 | Tokens per second: 5874.72 | Training tokens per second (%): 99.77 | MFU (%): 30.62 | TFLOPs: 302.79 | Global batch size: 1 | Global tokens/sec: 5874.72
+2025-05-18 16:28:06,350 - root - INFO - Step: 150 | Loss: 7.60 | Tokens per second: 5874.43 | Training tokens per second (%): 99.79 | MFU (%): 30.61 | TFLOPs: 302.78 | Global batch size: 1 | Global tokens/sec: 5874.43
+2025-05-18 16:28:09,840 - root - INFO - Step: 160 | Loss: 7.32 | Tokens per second: 5868.69 | Training tokens per second (%): 99.73 | MFU (%): 30.58 | TFLOPs: 302.48 | Global batch size: 1 | Global tokens/sec: 5868.69
+2025-05-18 16:28:13,330 - root - INFO - Step: 170 | Loss: 7.56 | Tokens per second: 5870.06 | Training tokens per second (%): 99.85 | MFU (%): 30.59 | TFLOPs: 302.55 | Global batch size: 1 | Global tokens/sec: 5870.06
+2025-05-18 16:28:16,818 - root - INFO - Step: 180 | Loss: 7.05 | Tokens per second: 5871.49 | Training tokens per second (%): 99.82 | MFU (%): 30.60 | TFLOPs: 302.62 | Global batch size: 1 | Global tokens/sec: 5871.49
+2025-05-18 16:28:20,302 - root - INFO - Step: 190 | Loss: 7.59 | Tokens per second: 5878.33 | Training tokens per second (%): 99.71 | MFU (%): 30.63 | TFLOPs: 302.98 | Global batch size: 1 | Global tokens/sec: 5878.33
+2025-05-18 16:28:23,789 - root - INFO - Step: 200 | Loss: 7.18 | Tokens per second: 5873.91 | Training tokens per second (%): 99.84 | MFU (%): 30.61 | TFLOPs: 302.75 | Global batch size: 1 | Global tokens/sec: 5873.91
+2025-05-18 16:28:27,275 - root - INFO - Step: 210 | Loss: 7.37 | Tokens per second: 5876.33 | Training tokens per second (%): 99.89 | MFU (%): 30.62 | TFLOPs: 302.87 | Global batch size: 1 | Global tokens/sec: 5876.33
+2025-05-18 16:28:30,762 - root - INFO - Step: 220 | Loss: 7.70 | Tokens per second: 5874.31 | Training tokens per second (%): 99.79 | MFU (%): 30.61 | TFLOPs: 302.77 | Global batch size: 1 | Global tokens/sec: 5874.31
+2025-05-18 16:28:34,252 - root - INFO - Step: 230 | Loss: 8.14 | Tokens per second: 5869.41 | Training tokens per second (%): 99.76 | MFU (%): 30.59 | TFLOPs: 302.52 | Global batch size: 1 | Global tokens/sec: 5869.41
+2025-05-18 16:28:37,736 - root - INFO - Step: 240 | Loss: 6.99 | Tokens per second: 5878.98 | Training tokens per second (%): 99.84 | MFU (%): 30.64 | TFLOPs: 303.01 | Global batch size: 1 | Global tokens/sec: 5878.98
+2025-05-18 16:28:41,227 - root - INFO - Step: 250 | Loss: 6.87 | Tokens per second: 5867.36 | Training tokens per second (%): 99.84 | MFU (%): 30.58 | TFLOPs: 302.41 | Global batch size: 1 | Global tokens/sec: 5867.36
+2025-05-18 16:28:44,711 - root - INFO - Step: 260 | Loss: 7.15 | Tokens per second: 5878.38 | Training tokens per second (%): 99.80 | MFU (%): 30.63 | TFLOPs: 302.98 | Global batch size: 1 | Global tokens/sec: 5878.38
+2025-05-18 16:28:48,203 - root - INFO - Step: 270 | Loss: 7.16 | Tokens per second: 5865.56 | Training tokens per second (%): 99.78 | MFU (%): 30.57 | TFLOPs: 302.32 | Global batch size: 1 | Global tokens/sec: 5865.56
+2025-05-18 16:28:51,693 - root - INFO - Step: 280 | Loss: 7.36 | Tokens per second: 5869.12 | Training tokens per second (%): 99.79 | MFU (%): 30.59 | TFLOPs: 302.50 | Global batch size: 1 | Global tokens/sec: 5869.12
+2025-05-18 16:28:55,187 - root - INFO - Step: 290 | Loss: 6.05 | Tokens per second: 5862.06 | Training tokens per second (%): 99.88 | MFU (%): 30.55 | TFLOPs: 302.14 | Global batch size: 1 | Global tokens/sec: 5862.06
+2025-05-18 16:28:58,668 - root - INFO - Step: 300 | Loss: 8.64 | Tokens per second: 5883.76 | Training tokens per second (%): 99.91 | MFU (%): 30.66 | TFLOPs: 303.26 | Global batch size: 1 | Global tokens/sec: 5883.76
+2025-05-18 16:29:02,158 - root - INFO - Step: 310 | Loss: 7.17 | Tokens per second: 5869.14 | Training tokens per second (%): 99.61 | MFU (%): 30.59 | TFLOPs: 302.50 | Global batch size: 1 | Global tokens/sec: 5869.14
+2025-05-18 16:29:05,644 - root - INFO - Step: 320 | Loss: 7.34 | Tokens per second: 5876.49 | Training tokens per second (%): 99.75 | MFU (%): 30.62 | TFLOPs: 302.88 | Global batch size: 1 | Global tokens/sec: 5876.49
+2025-05-18 16:29:09,131 - root - INFO - Step: 330 | Loss: 7.18 | Tokens per second: 5873.85 | Training tokens per second (%): 99.80 | MFU (%): 30.61 | TFLOPs: 302.75 | Global batch size: 1 | Global tokens/sec: 5873.85
+2025-05-18 16:29:12,618 - root - INFO - Step: 340 | Loss: 7.39 | Tokens per second: 5873.37 | Training tokens per second (%): 99.83 | MFU (%): 30.61 | TFLOPs: 302.72 | Global batch size: 1 | Global tokens/sec: 5873.37
+2025-05-18 16:29:16,103 - root - INFO - Step: 350 | Loss: 6.99 | Tokens per second: 5876.68 | Training tokens per second (%): 99.83 | MFU (%): 30.63 | TFLOPs: 302.89 | Global batch size: 1 | Global tokens/sec: 5876.68
+2025-05-18 16:29:19,591 - root - INFO - Step: 360 | Loss: 7.18 | Tokens per second: 5873.80 | Training tokens per second (%): 99.77 | MFU (%): 30.61 | TFLOPs: 302.74 | Global batch size: 1 | Global tokens/sec: 5873.80
+2025-05-18 16:29:23,075 - root - INFO - Step: 370 | Loss: 7.06 | Tokens per second: 5878.74 | Training tokens per second (%): 99.85 | MFU (%): 30.64 | TFLOPs: 303.00 | Global batch size: 1 | Global tokens/sec: 5878.74
+2025-05-18 16:29:26,562 - root - INFO - Step: 380 | Loss: 7.12 | Tokens per second: 5873.63 | Training tokens per second (%): 99.72 | MFU (%): 30.61 | TFLOPs: 302.73 | Global batch size: 1 | Global tokens/sec: 5873.63
+2025-05-18 16:29:30,058 - root - INFO - Step: 390 | Loss: 7.14 | Tokens per second: 5859.56 | Training tokens per second (%): 99.78 | MFU (%): 30.54 | TFLOPs: 302.01 | Global batch size: 1 | Global tokens/sec: 5859.56
+2025-05-18 16:29:33,541 - root - INFO - Step: 400 | Loss: 6.68 | Tokens per second: 5880.62 | Training tokens per second (%): 99.85 | MFU (%): 30.65 | TFLOPs: 303.09 | Global batch size: 1 | Global tokens/sec: 5880.62
+2025-05-18 16:29:37,021 - root - INFO - Step: 410 | Loss: 6.96 | Tokens per second: 5885.46 | Training tokens per second (%): 99.82 | MFU (%): 30.67 | TFLOPs: 303.34 | Global batch size: 1 | Global tokens/sec: 5885.46
+2025-05-18 16:29:40,515 - root - INFO - Step: 420 | Loss: 7.41 | Tokens per second: 5861.14 | Training tokens per second (%): 99.89 | MFU (%): 30.55 | TFLOPs: 302.09 | Global batch size: 1 | Global tokens/sec: 5861.14
+2025-05-18 16:29:43,998 - root - INFO - Step: 430 | Loss: 6.66 | Tokens per second: 5881.22 | Training tokens per second (%): 99.80 | MFU (%): 30.65 | TFLOPs: 303.13 | Global batch size: 1 | Global tokens/sec: 5881.22
+2025-05-18 16:29:47,481 - root - INFO - Step: 440 | Loss: 6.70 | Tokens per second: 5881.62 | Training tokens per second (%): 99.71 | MFU (%): 30.65 | TFLOPs: 303.15 | Global batch size: 1 | Global tokens/sec: 5881.62
+2025-05-18 16:29:50,968 - root - INFO - Step: 450 | Loss: 7.07 | Tokens per second: 5873.41 | Training tokens per second (%): 99.72 | MFU (%): 30.61 | TFLOPs: 302.72 | Global batch size: 1 | Global tokens/sec: 5873.41
+2025-05-18 16:29:54,453 - root - INFO - Step: 460 | Loss: 6.43 | Tokens per second: 5877.35 | Training tokens per second (%): 99.74 | MFU (%): 30.63 | TFLOPs: 302.93 | Global batch size: 1 | Global tokens/sec: 5877.35
+2025-05-18 16:29:57,940 - root - INFO - Step: 470 | Loss: 6.80 | Tokens per second: 5873.68 | Training tokens per second (%): 99.72 | MFU (%): 30.61 | TFLOPs: 302.74 | Global batch size: 1 | Global tokens/sec: 5873.68
+2025-05-18 16:30:01,425 - root - INFO - Step: 480 | Loss: 7.25 | Tokens per second: 5876.95 | Training tokens per second (%): 99.90 | MFU (%): 30.63 | TFLOPs: 302.90 | Global batch size: 1 | Global tokens/sec: 5876.95
+2025-05-18 16:30:04,910 - root - INFO - Step: 490 | Loss: 6.99 | Tokens per second: 5878.45 | Training tokens per second (%): 99.74 | MFU (%): 30.64 | TFLOPs: 302.98 | Global batch size: 1 | Global tokens/sec: 5878.45
+2025-05-18 16:30:08,416 - root - INFO - Step: 500 | Loss: 6.62 | Tokens per second: 5842.41 | Training tokens per second (%): 99.88 | MFU (%): 30.45 | TFLOPs: 301.13 | Global batch size: 1 | Global tokens/sec: 5842.41
+2025-05-18 16:30:11,905 - root - INFO - Step: 510 | Loss: 6.79 | Tokens per second: 5869.73 | Training tokens per second (%): 99.82 | MFU (%): 30.59 | TFLOPs: 302.53 | Global batch size: 1 | Global tokens/sec: 5869.73
+2025-05-18 16:30:15,389 - root - INFO - Step: 520 | Loss: 6.51 | Tokens per second: 5880.06 | Training tokens per second (%): 99.68 | MFU (%): 30.64 | TFLOPs: 303.07 | Global batch size: 1 | Global tokens/sec: 5880.06
+2025-05-18 16:30:18,878 - root - INFO - Step: 530 | Loss: 6.74 | Tokens per second: 5869.40 | Training tokens per second (%): 99.79 | MFU (%): 30.59 | TFLOPs: 302.52 | Global batch size: 1 | Global tokens/sec: 5869.40
+2025-05-18 16:30:22,367 - root - INFO - Step: 540 | Loss: 6.28 | Tokens per second: 5871.51 | Training tokens per second (%): 99.73 | MFU (%): 30.60 | TFLOPs: 302.62 | Global batch size: 1 | Global tokens/sec: 5871.51
+2025-05-18 16:30:25,850 - root - INFO - Step: 550 | Loss: 7.28 | Tokens per second: 5880.01 | Training tokens per second (%): 99.80 | MFU (%): 30.64 | TFLOPs: 303.06 | Global batch size: 1 | Global tokens/sec: 5880.01
+2025-05-18 16:30:29,332 - root - INFO - Step: 560 | Loss: 7.09 | Tokens per second: 5883.04 | Training tokens per second (%): 99.95 | MFU (%): 30.66 | TFLOPs: 303.22 | Global batch size: 1 | Global tokens/sec: 5883.04
+2025-05-18 16:30:32,824 - root - INFO - Step: 570 | Loss: 7.06 | Tokens per second: 5865.08 | Training tokens per second (%): 99.82 | MFU (%): 30.57 | TFLOPs: 302.29 | Global batch size: 1 | Global tokens/sec: 5865.08
+2025-05-18 16:30:36,311 - root - INFO - Step: 580 | Loss: 6.88 | Tokens per second: 5873.90 | Training tokens per second (%): 99.79 | MFU (%): 30.61 | TFLOPs: 302.75 | Global batch size: 1 | Global tokens/sec: 5873.90
+2025-05-18 16:30:39,794 - root - INFO - Step: 590 | Loss: 6.82 | Tokens per second: 5881.80 | Training tokens per second (%): 99.71 | MFU (%): 30.65 | TFLOPs: 303.15 | Global batch size: 1 | Global tokens/sec: 5881.80
+2025-05-18 16:30:43,276 - root - INFO - Step: 600 | Loss: 6.34 | Tokens per second: 5880.83 | Training tokens per second (%): 99.77 | MFU (%): 30.65 | TFLOPs: 303.10 | Global batch size: 1 | Global tokens/sec: 5880.83
+2025-05-18 16:30:46,759 - root - INFO - Step: 610 | Loss: 6.76 | Tokens per second: 5881.94 | Training tokens per second (%): 99.86 | MFU (%): 30.65 | TFLOPs: 303.16 | Global batch size: 1 | Global tokens/sec: 5881.94
+2025-05-18 16:30:50,245 - root - INFO - Step: 620 | Loss: 6.60 | Tokens per second: 5875.15 | Training tokens per second (%): 99.81 | MFU (%): 30.62 | TFLOPs: 302.81 | Global batch size: 1 | Global tokens/sec: 5875.15
+2025-05-18 16:30:53,727 - root - INFO - Step: 630 | Loss: 6.87 | Tokens per second: 5883.21 | Training tokens per second (%): 99.79 | MFU (%): 30.66 | TFLOPs: 303.23 | Global batch size: 1 | Global tokens/sec: 5883.21
+2025-05-18 16:30:57,251 - root - INFO - Step: 640 | Loss: 6.30 | Tokens per second: 5811.31 | Training tokens per second (%): 99.97 | MFU (%): 30.29 | TFLOPs: 299.52 | Global batch size: 1 | Global tokens/sec: 5811.31
+2025-05-18 16:31:00,739 - root - INFO - Step: 650 | Loss: 7.17 | Tokens per second: 5872.91 | Training tokens per second (%): 99.75 | MFU (%): 30.61 | TFLOPs: 302.70 | Global batch size: 1 | Global tokens/sec: 5872.91
+2025-05-18 16:31:04,225 - root - INFO - Step: 660 | Loss: 6.82 | Tokens per second: 5874.89 | Training tokens per second (%): 99.76 | MFU (%): 30.62 | TFLOPs: 302.80 | Global batch size: 1 | Global tokens/sec: 5874.89
+2025-05-18 16:31:07,708 - root - INFO - Step: 670 | Loss: 6.84 | Tokens per second: 5881.14 | Training tokens per second (%): 99.80 | MFU (%): 30.65 | TFLOPs: 303.12 | Global batch size: 1 | Global tokens/sec: 5881.14
+2025-05-18 16:31:11,192 - root - INFO - Step: 680 | Loss: 6.35 | Tokens per second: 5879.40 | Training tokens per second (%): 99.76 | MFU (%): 30.64 | TFLOPs: 303.03 | Global batch size: 1 | Global tokens/sec: 5879.40
+2025-05-18 16:31:14,675 - root - INFO - Step: 690 | Loss: 6.54 | Tokens per second: 5880.74 | Training tokens per second (%): 99.81 | MFU (%): 30.65 | TFLOPs: 303.10 | Global batch size: 1 | Global tokens/sec: 5880.74
+2025-05-18 16:31:18,163 - root - INFO - Step: 700 | Loss: 6.63 | Tokens per second: 5871.72 | Training tokens per second (%): 99.76 | MFU (%): 30.60 | TFLOPs: 302.64 | Global batch size: 1 | Global tokens/sec: 5871.72
+2025-05-18 16:31:21,648 - root - INFO - Step: 710 | Loss: 6.78 | Tokens per second: 5877.21 | Training tokens per second (%): 99.76 | MFU (%): 30.63 | TFLOPs: 302.92 | Global batch size: 1 | Global tokens/sec: 5877.21
+2025-05-18 16:31:25,138 - root - INFO - Step: 720 | Loss: 6.48 | Tokens per second: 5869.94 | Training tokens per second (%): 99.90 | MFU (%): 30.59 | TFLOPs: 302.54 | Global batch size: 1 | Global tokens/sec: 5869.94
+2025-05-18 16:31:28,620 - root - INFO - Step: 730 | Loss: 7.15 | Tokens per second: 5881.56 | Training tokens per second (%): 99.95 | MFU (%): 30.65 | TFLOPs: 303.14 | Global batch size: 1 | Global tokens/sec: 5881.56
+2025-05-18 16:31:32,111 - root - INFO - Step: 740 | Loss: 6.78 | Tokens per second: 5867.06 | Training tokens per second (%): 99.90 | MFU (%): 30.58 | TFLOPs: 302.40 | Global batch size: 1 | Global tokens/sec: 5867.06
+2025-05-18 16:31:35,593 - root - INFO - Step: 750 | Loss: 6.88 | Tokens per second: 5882.64 | Training tokens per second (%): 99.81 | MFU (%): 30.66 | TFLOPs: 303.20 | Global batch size: 1 | Global tokens/sec: 5882.64
+2025-05-18 16:31:39,081 - root - INFO - Step: 760 | Loss: 6.34 | Tokens per second: 5872.67 | Training tokens per second (%): 99.71 | MFU (%): 30.61 | TFLOPs: 302.68 | Global batch size: 1 | Global tokens/sec: 5872.67
+2025-05-18 16:31:42,564 - root - INFO - Step: 770 | Loss: 6.58 | Tokens per second: 5881.23 | Training tokens per second (%): 99.74 | MFU (%): 30.65 | TFLOPs: 303.13 | Global batch size: 1 | Global tokens/sec: 5881.23
+2025-05-18 16:31:46,050 - root - INFO - Step: 780 | Loss: 6.36 | Tokens per second: 5875.58 | Training tokens per second (%): 99.82 | MFU (%): 30.62 | TFLOPs: 302.83 | Global batch size: 1 | Global tokens/sec: 5875.58
+2025-05-18 16:31:49,541 - root - INFO - Step: 790 | Loss: 6.50 | Tokens per second: 5866.53 | Training tokens per second (%): 99.82 | MFU (%): 30.57 | TFLOPs: 302.37 | Global batch size: 1 | Global tokens/sec: 5866.53
+2025-05-18 16:31:53,030 - root - INFO - Step: 800 | Loss: 6.78 | Tokens per second: 5871.05 | Training tokens per second (%): 99.89 | MFU (%): 30.60 | TFLOPs: 302.60 | Global batch size: 1 | Global tokens/sec: 5871.05
+2025-05-18 16:31:56,522 - root - INFO - Step: 810 | Loss: 6.32 | Tokens per second: 5865.93 | Training tokens per second (%): 99.79 | MFU (%): 30.57 | TFLOPs: 302.34 | Global batch size: 1 | Global tokens/sec: 5865.93
+2025-05-18 16:32:00,015 - root - INFO - Step: 820 | Loss: 6.39 | Tokens per second: 5863.35 | Training tokens per second (%): 99.86 | MFU (%): 30.56 | TFLOPs: 302.20 | Global batch size: 1 | Global tokens/sec: 5863.35
+2025-05-18 16:32:03,503 - root - INFO - Step: 830 | Loss: 6.64 | Tokens per second: 5872.27 | Training tokens per second (%): 99.66 | MFU (%): 30.60 | TFLOPs: 302.66 | Global batch size: 1 | Global tokens/sec: 5872.27
+2025-05-18 16:32:06,991 - root - INFO - Step: 840 | Loss: 6.69 | Tokens per second: 5873.07 | Training tokens per second (%): 99.77 | MFU (%): 30.61 | TFLOPs: 302.71 | Global batch size: 1 | Global tokens/sec: 5873.07
+2025-05-18 16:32:10,480 - root - INFO - Step: 850 | Loss: 6.23 | Tokens per second: 5869.30 | Training tokens per second (%): 99.87 | MFU (%): 30.59 | TFLOPs: 302.51 | Global batch size: 1 | Global tokens/sec: 5869.30
+2025-05-18 16:32:13,966 - root - INFO - Step: 860 | Loss: 6.35 | Tokens per second: 5875.58 | Training tokens per second (%): 99.77 | MFU (%): 30.62 | TFLOPs: 302.83 | Global batch size: 1 | Global tokens/sec: 5875.58
+2025-05-18 16:32:17,453 - root - INFO - Step: 870 | Loss: 6.27 | Tokens per second: 5874.21 | Training tokens per second (%): 99.90 | MFU (%): 30.61 | TFLOPs: 302.76 | Global batch size: 1 | Global tokens/sec: 5874.21
+2025-05-18 16:32:20,936 - root - INFO - Step: 880 | Loss: 6.18 | Tokens per second: 5881.36 | Training tokens per second (%): 99.79 | MFU (%): 30.65 | TFLOPs: 303.13 | Global batch size: 1 | Global tokens/sec: 5881.36
+2025-05-18 16:32:24,422 - root - INFO - Step: 890 | Loss: 6.43 | Tokens per second: 5875.51 | Training tokens per second (%): 99.93 | MFU (%): 30.62 | TFLOPs: 302.83 | Global batch size: 1 | Global tokens/sec: 5875.51
+2025-05-18 16:32:27,913 - root - INFO - Step: 900 | Loss: 6.56 | Tokens per second: 5867.93 | Training tokens per second (%): 99.79 | MFU (%): 30.58 | TFLOPs: 302.44 | Global batch size: 1 | Global tokens/sec: 5867.93
+2025-05-18 16:32:31,399 - root - INFO - Step: 910 | Loss: 6.48 | Tokens per second: 5875.10 | Training tokens per second (%): 99.79 | MFU (%): 30.62 | TFLOPs: 302.81 | Global batch size: 1 | Global tokens/sec: 5875.10
+2025-05-18 16:32:34,884 - root - INFO - Step: 920 | Loss: 6.70 | Tokens per second: 5877.91 | Training tokens per second (%): 99.72 | MFU (%): 30.63 | TFLOPs: 302.95 | Global batch size: 1 | Global tokens/sec: 5877.91
+2025-05-18 16:32:38,369 - root - INFO - Step: 930 | Loss: 6.67 | Tokens per second: 5876.03 | Training tokens per second (%): 99.86 | MFU (%): 30.62 | TFLOPs: 302.86 | Global batch size: 1 | Global tokens/sec: 5876.03
+2025-05-18 16:32:41,856 - root - INFO - Step: 940 | Loss: 6.67 | Tokens per second: 5874.95 | Training tokens per second (%): 99.87 | MFU (%): 30.62 | TFLOPs: 302.80 | Global batch size: 1 | Global tokens/sec: 5874.95
+2025-05-18 16:32:45,348 - root - INFO - Step: 950 | Loss: 5.71 | Tokens per second: 5864.98 | Training tokens per second (%): 99.81 | MFU (%): 30.57 | TFLOPs: 302.29 | Global batch size: 1 | Global tokens/sec: 5864.98
+2025-05-18 16:32:48,836 - root - INFO - Step: 960 | Loss: 6.63 | Tokens per second: 5873.34 | Training tokens per second (%): 99.83 | MFU (%): 30.61 | TFLOPs: 302.72 | Global batch size: 1 | Global tokens/sec: 5873.34
+2025-05-18 16:32:52,325 - root - INFO - Step: 970 | Loss: 6.48 | Tokens per second: 5869.06 | Training tokens per second (%): 99.83 | MFU (%): 30.59 | TFLOPs: 302.50 | Global batch size: 1 | Global tokens/sec: 5869.06
+2025-05-18 16:32:55,816 - root - INFO - Step: 980 | Loss: 6.52 | Tokens per second: 5868.76 | Training tokens per second (%): 99.76 | MFU (%): 30.58 | TFLOPs: 302.48 | Global batch size: 1 | Global tokens/sec: 5868.76
+2025-05-18 16:32:59,303 - root - INFO - Step: 990 | Loss: 6.23 | Tokens per second: 5873.78 | Training tokens per second (%): 99.79 | MFU (%): 30.61 | TFLOPs: 302.74 | Global batch size: 1 | Global tokens/sec: 5873.78
+2025-05-18 16:33:02,798 - root - INFO - Step: 1000 | Loss: 6.36 | Tokens per second: 5860.74 | Training tokens per second (%): 99.70 | MFU (%): 30.54 | TFLOPs: 302.07 | Global batch size: 1 | Global tokens/sec: 5860.74
+2025-05-18 16:33:02,798 - root - INFO - Training completed
+[sbatch-master] task finished
