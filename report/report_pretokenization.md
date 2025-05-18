@@ -1,7 +1,7 @@
 ---
 title: "Pretokenization in LLM Training"
 author: [Ramon Kaspar]
-date: "2025-05-07"
+date: "2025-05-18"
 subject: "Large Scale AI-Engineering"
 lang: "en"
 ...
@@ -50,7 +50,7 @@ Next, modified the training pipeline `train.py` to conditionally use pretokenize
 
 ### Tests
 
-We rigorously tested our pretokenization (see also `analysis/pretokenization_verification.py`) by making sure the pretokenization matches on-the-fly tokenization. We also inspected the losses during traiing (see Appendix) to make sure pretokenization does not hurt performance.
+We rigorously tested our pretokenization (see also `analysis/pretokenization_verification.py`) by making sure the pretokenization matches on-the-fly tokenization. We also inspected the losses during training (see Appendix) to make sure pretokenization does not hurt performance.
 
 
 ## Results and Analysis
