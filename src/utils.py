@@ -1,10 +1,12 @@
 import argparse
 import functools
 import logging
+import os
 
 from contextlib import contextmanager
 
 import torch
+import torch.distributed as dist
 from torch.optim.lr_scheduler import LambdaLR
 
 logger = logging.getLogger()
@@ -99,6 +101,40 @@ def set_default_dtype(dtype: torch.dtype):
         yield
     finally:
         torch.set_default_dtype(old_dtype)
+        
+def setup_distributed(backend='nccl'):
+    """
+    Initialize the distributed environment
+    """
+    # Set by torchrun
+    rank = int(os.environ.get("RANK", "0"))
+    local_rank = int(os.environ.get("LOCAL_RANK", "0"))
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    node_id = os.environ.get("SLURM_NODEID", "N/A")
+    
+    torch.cuda.set_device(local_rank)
+    
+    dist.init_process_group(backend=backend)
+    
+    logger.info(f"[Distributed Init] Rank {rank} initialized on node {node_id} on GPU {local_rank}.")
+    
+    # Add barrier to ensure all processes are ready before proceeding
+    dist.barrier()
+    if rank == 0:
+        logger.info(f"[Rank {rank}] All ranks ready!")
+    
+    return {
+        'rank': rank,
+        'world_size': world_size,
+        'local_rank': local_rank,
+        'device': torch.device(f"cuda:{local_rank}"),
+        'is_master': rank == 0
+    }
+
+def cleanup_distributed():
+    """Clean up the distributed environment."""
+    if torch.distributed.is_initialized():
+        torch.distributed.destroy_process_group()
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -194,6 +230,18 @@ def get_args():
         "--compile",
         action='store_true',
         help="Set to compile the model with `torch.compile`"
+    )
+    parser.add_argument(
+        "--distributed",
+        action='store_true',
+        help="Enable distributed data parallel training"
+    )
+    parser.add_argument(
+        "--backend",
+        type=str,
+        default="nccl",
+        choices=["nccl", "gloo"],
+        help="Backend for distributed training (nccl for GPU, gloo for CPU)"
     )
     args = parser.parse_args()
     return args
