@@ -4,7 +4,7 @@ This repo contains the final project for the "Large Scale AI Engineering" course
 
 ## Project Overview
 
-Training large language models involves converting text to tokens before feeding them to the model. This tokenization process is typically done on-the-fly during training, which can become a bottleneck. This project explores if *pretokenization* - processing the text into tokens beforehand - can improve training efficiency.
+Training large language models involves converting text to tokens before feeding them to the model. This tokenization process is typically done on-the-fly during training, which might become a bottleneck. This project explores if *pretokenization* – processing the text into tokens beforehand – can improve training efficiency.
 
 We implemented and compared four approaches:
 - Standard padded tokenization (baseline)
@@ -17,9 +17,9 @@ We implemented and compared four approaches:
 - In isolated benchmarks, pretokenization achieved up to **5.9× faster** processing speeds
 - The token-list format improved storage efficiency 
 - Despite these improvements, overall training throughput showed minimal differences
-- Preliminary evidence suggests benefits might increase with larger batch sizes
+- The observations suggest benefits might increase with larger batch sizes
 
-**For detailed implementation details, methodology, complete results, and analysis, please see [the full report](report/report_pretokenization.md).**
+**For implementation details, results, and analysis, please see [the full report](report/report_pretokenization.pdf).**
 
 ## How to Run
 
@@ -67,12 +67,14 @@ For additional run configurations and SLURM job scripts, see the `scripts` direc
 
 ## Preview: Tokenization Performance
 
-The chart below shows the remarkanle processing speedup achieved by pretokenization in isolation, though this doesn't directly translate to overall training speed improvements as explained in the full report.
+The chart below shows the remarkable processing speedup achieved by pretokenization in isolation, though this doesn't directly translate to overall training speed improvements as explained in the full report.
 
-![Tokenization Performance](plots/tokenization_benchmark.png)
+<p align="center">
+    <img src="plots/tokenization_benchmark.png" width="500">
+</p>
 
 However, this dramatic speedup doesn't directly translate to overall training performance. With `batch_size=2`, the pretokenized `token-list` approach shows only a minimal benefit (0.9% faster):
 
 ![alt text](plots/batch_size_comparison.png)
 
-The full report explains this discrepancy and tries to argument why GPU computation -- not tokenization -- is the main bottleneck in LLM training.
+The full report explains this discrepancy and tries to argument why GPU computation – not tokenization – is the main bottleneck in LLM training.
