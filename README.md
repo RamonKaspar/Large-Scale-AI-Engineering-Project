@@ -75,6 +75,8 @@ The chart below shows the remarkable processing speedup achieved by pretokenizat
 
 However, this dramatic speedup doesn't directly translate to overall training performance. With `batch_size=2`, the pretokenized `token-list` approach shows only a minimal benefit (0.9% faster):
 
-![alt text](plots/batch_size_comparison.png)
+<p align="center">
+    <img src="plots/batch_size_comparison.png" width="800">
+</p>
 
 The full report explains this discrepancy and tries to argument why GPU computation – not tokenization – is the main bottleneck in LLM training.
