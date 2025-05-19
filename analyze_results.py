@@ -3,7 +3,7 @@ Analyze and visualize training results from log files (locally)
 Used after running experiments on the cluster to generate performance plots.
 """
 
-=== Analysis Feature 1: Pretokenization ===
+# === Analysis Feature 1: Pretokenization ===
 
 import os
 from analysis.plotting import plot_results
@@ -48,3 +48,28 @@ for config, metrics in results.items():
     print(f"{config:<55} {metrics['tokens_per_second']:<15.2f} {metrics['mfu_percent']:<15.2f} {metrics['tflops']:<15.2f}")
     
 plot_time_series(results, 'loss', 'Validation Loss During Training', 'Loss', 'loss_over_time.png', output_dir)
+
+
+# === Feature 2: Plot Results for different world sizes ===
+from analysis.plotting_ddp import plot_ddp_results
+
+log_files = {
+    'Padded (batch_size=8, world_size=4)': 'logs/lsai_ddp_baseline_padded_ws_4_bs_8-447441.out',
+    'Padded (batch_size=8, world_size=8)': 'logs/lsai_ddp_baseline_padded_ws_8_bs_8-447445.out',
+    'Padded (batch_size=8, world_size=12)': 'logs/lsai_ddp_baseline_padded_ws_12_bs_8-447480.out',
+    'Padded (batch_size=8, world_size=16)': 'logs/lsai_ddp_baseline_padded_ws_16_bs_8-448370.out',
+    'Pretokenized padded (batch_size=8, world_size=4)': 'logs/lsai_ddp_baseline_pretokenized_padded_ws_4_bs_8-448371.out',
+    'Pretokenized padded (batch_size=8, world_size=8)': 'logs/lsai_ddp_baseline_pretokenized_padded_ws_8_bs_8-448390.out',
+    'Pretokenized padded (batch_size=8, world_size=12)': 'logs/lsai_ddp_baseline_pretokenized_padded_ws_12_bs_8-448396.out',
+    'Pretokenized padded (batch_size=8, world_size=16)': 'logs/lsai_ddp_baseline_pretokenized_padded_ws_16_bs_8-448404.out',
+    'Padding-free (batch_size=8, world_size=4)': 'logs/lsai_ddp_baseline_padding_free_w_4_bs_8-448544.out',
+    'Padding-free (batch_size=8, world_size=8)': 'logs/lsai_ddp_baseline_padding_free_w_8_bs_8-448551.out',
+    'Padding-free (batch_size=8, world_size=12)': 'logs/lsai_ddp_baseline_padding_free_w_12_bs_8-448730.out',
+    'Padding-free (batch_size=8, world_size=16)': 'logs/lsai_ddp_baseline_padding_free_w_16_bs_8-448904.out',
+    'Pretokenized token-list (batch_size=8, world_size=4)': 'logs/lsai_ddp_baseline_pretokenized_tokenlist_ws_4_bs_8-448825.out',
+    'Pretokenized token-list (batch_size=8, world_size=8)': 'logs/lsai_ddp_baseline_pretokenized_tokenlist_ws_8_bs_8-448794.out',
+    'Pretokenized token-list (batch_size=8, world_size=12)': 'logs/lsai_ddp_baseline_pretokenized_tokenlist_ws_12_bs_8-448838.out',
+    'Pretokenized token-list (batch_size=8, world_size=16)': 'logs/lsai_ddp_baseline_pretokenized_tokenlist_ws_16_bs_8-448745.out',
+}
+
+plot_ddp_results(log_files, output_dir="plots/plots_ddp")
