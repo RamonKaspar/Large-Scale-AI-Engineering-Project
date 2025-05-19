@@ -29,27 +29,61 @@ class PreTokenizedDataset(Dataset):
 class IterablePreTokenizedDataset(IterableDataset):
     """
     Minimal adaptation of IterableParquetDataset that uses pretokenized data.
+    Adapted to be usable with DDP.
     """
     def __init__(self, parquet_file: str, sequence_length: int, bos_token_id: int = 1):
         self.parquet_ds = pq.read_table(parquet_file, memory_map=True)
         self.real_length = len(self.parquet_ds)
         self.sequence_length = sequence_length
         self.bos_token_id = bos_token_id
-        self.current_index = 0
         self.token_buffer = []
+        
+        # Initialize rank and world_size to defaults
+        self.rank = 0
+        self.world_size = 1
 
     def __iter__(self):
+        # Reset state
         self.token_buffer = []
-        self.current_index = 0
+        
+        # Get worker info for single-process dataloader sharding
+        worker_info = torch.utils.data.get_worker_info()
+        
+        # Get distributed info for DDP sharding
+        if torch.distributed.is_available() and torch.distributed.is_initialized():
+            self.rank = torch.distributed.get_rank()
+            self.world_size = torch.distributed.get_world_size()
+        else:
+            self.rank = 0
+            self.world_size = 1
+            
+        # Further shard data if using multiple DataLoader workers
+        if worker_info is not None:
+            worker_id = worker_info.id
+            num_workers = worker_info.num_workers
+            self.rank = self.rank * num_workers + worker_id
+            self.world_size *= num_workers
+            
+        # Calculate the shard size and starting position for this rank
+        shard_size = self.real_length // self.world_size
+        start_idx = self.rank * shard_size
+        end_idx = start_idx + shard_size if self.rank < self.world_size - 1 else self.real_length
+        
+        # Initialize to our shard's starting position
+        self.current_index = start_idx
+        # Track end of our shard
+        self.end_index = end_idx
+        
         return self
 
     def __next__(self):
         # Fill the buffer until we have enough tokens
         while len(self.token_buffer) < self.sequence_length + 1:
-            # Get the next document
-            if self.current_index >= self.real_length:
-                self.current_index = 0  # Wrap around to the beginning
+            if self.current_index >= self.end_index:
+                # When reaching the end of this rank's shard, loop back to start of the shard
+                self.current_index = self.rank * (self.real_length // self.world_size)
             
+            # Get tokens from our shard
             tokens = self.parquet_ds["tokens"][self.current_index].as_py()
             self.current_index += 1
             
