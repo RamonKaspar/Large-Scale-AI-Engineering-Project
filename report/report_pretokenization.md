@@ -59,7 +59,7 @@ We rigorously tested our pretokenization (see also `analysis/pretokenization_ver
 
 In isolated benchmarks, pretokenization showed significant improvements (measured for 1000 samples):
 
-![Tokenization Benchmark](../plots/tokenization_benchmark.png)
+![Tokenization Benchmark](../plots/plots_pretokenization/tokenization_benchmark.png)
 
 The _token-list_ format shows particularly impressive gains in processing time -- reducing it from 2.70s to just 0.46s. This clearly demonstrates the theoretical efficiency gains possible by eliminating redundant tokenization operations during the training stage. \
 However, as we see in the next section, these dramatic processing speedups do not translate to meaningful improvements in actual training throughput.
@@ -81,7 +81,7 @@ We benchmarked the actual benefit (in terms of throughput, MFU, and achieved TFL
 
 Interestingly, our data suggests that pretokenization benefits may scale with batch size. For the token-list approach, pretokenization went from 9.8% slower at batch_size=1 to 0.9% faster at batch_size=2. This trend suggests that with larger batch sizes (which we were unable to test due to GPU memory constraints), pretokenization could provide more significant performance benefits.
 
-![Bar chart comparing tokens per second across tokenization approaches with batch sizes 1 and 2, showing pretokenized token-list improving from slower to slightly faster as batch size increases.](../plots/batch_size_comparison.png)
+![Bar chart comparing tokens per second across tokenization approaches with batch sizes 1 and 2, showing pretokenized token-list improving from slower to slightly faster as batch size increases.](../plots/plots_pretokenization/batch_size_comparison.png)
 
 ### Analysis and Insights
 
@@ -185,13 +185,13 @@ class IterablePreTokenizedDataset(IterableDataset):
 
 The following plot shows the training loss over time, using different on-the-fly and pretokenization approaches. We can see that pretokenization does not hurt performance.
 
-![Training loss over time](../plots/loss_over_time.png)
+![Training loss over time](../plots/plots_pretokenization/loss_over_time.png)
 
 
 ## Training Performance Over Time
 
 While the results section presents average performance metrics, examining how these metrics evolve during training provides additional insights. These charts confirm that the relative performance differences between approaches remain consistent throughout training, with no significant degradation or improvement over time.
 
-![MFU over time](../plots/mfu_over_time.png)
+![MFU over time](../plots/plots_pretokenization/mfu_over_time.png)
 
-![Tokens per second over time](../plots/tokens_per_second_over_time.png)
+![Tokens per second over time](../plots/plots_pretokenization/tokens_per_second_over_time.png)
