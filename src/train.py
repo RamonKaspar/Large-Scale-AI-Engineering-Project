@@ -135,12 +135,12 @@ def train(args):
   if is_master:
     logger.info("Setting up Model...")
   model_config = TransformerModelArgs(
-    dim=4096,
-    n_layers=32,
-    n_heads=32,
-    n_kv_heads=8,
+    dim=2048,
+    n_layers=16,
+    n_heads=16,
+    n_kv_heads=4,
     ffn_dim_multiplier=1.3,
-    multiple_of=1024,
+    multiple_of=256,
     rope_theta=500000,
     vocab_size=tokenizer.vocab_size,
     seq_len=args.sequence_length,
